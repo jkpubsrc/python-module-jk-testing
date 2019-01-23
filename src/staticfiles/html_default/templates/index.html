@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="utf-8"/>
+	<link href="styles.css" rel="stylesheet"/>
+	<script src="jquery-3.3.1.min.js"></script>
+	<link href="jquery-ui-1.12.1.min.css" rel="stylesheet"/>
+	<script src="jquery-ui-1.12.1.min.js"></script>
+	<script>
+		$( function() {
+			$( "#tabs" ).tabs();
+		} );
+	</script>
+</head>
+<body>
+
+	<div style="display: flex; flex-direction: row;">
+
+		<div style="flex: 33%; margin-right: 10px;">
+
+			<table style="margin-bottom: 10px" class="summary">
+				<tr>
+					<td>Tests performed:</td>
+					<td>{{ summary.countTestsPerformed }}</td>
+					<td rowspan="4"></td>
+					<td>Sum of all test durations:</td>
+					<td>{{ "%.03f"|format(summary.totalTestDuration) }} s</td>
+				</tr>
+				<tr>
+					<td>Tests succeeded:</td>
+					<td>{{ summary.countTestsSucceeded }}</td>
+					<td>Total runtime of all tests:</td>
+					<td>{{ "%.03f"|format(summary.totalTestRuntime) }} s</td>
+				</tr>
+				<tr>
+					<td>Tests failed:</td>
+					{% if summary.countTestsFailed > 0 %}
+					<td style="color: #fff; background-color: #ff0000;">{{ summary.countTestsFailed }}</td>
+					{% else %}
+					<td>{{ summary.countTestsFailed }}</td>
+					{% endif %}
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>Tests not performed:</td>
+					{% if summary.countTestsFailed > 0 %}
+					<td style="color: #fff; background-color: #ff8000;">{{ summary.countTestsNotYetPerformed }}</td>
+					{% else %}
+					<td>{{ summary.countTestsNotYetPerformed }}</td>
+					{% endif %}
+					<td></td>
+					<td></td>
+				</tr>
+			</table>
+		
+			<div id="tabs">
+				<ul>
+					<li><a href="#tabs-1">Graph</a></li>
+					<li><a href="#tabs-2">Table</a></li>
+				</ul>
+				<div id="tabs-1" style="margin-bottom: 20px">
+					{{- svg|safe -}}
+				</div>
+				<div id="tabs-2">
+					<table class="overview">
+						<tr class="heading">
+							<th class="testCaseMarker">▶</th>
+							<th class="testCaseName">Test case</th>
+							<th class="testCaseEnabled">Enabled</th>
+							<th class="testCaseResult">Result</th>
+							<th class="testCaseDuration">Duration</th>
+							<th class="testCaseDescription">Description</th>
+							<th class="testCaseMarker">◀</th>
+						</tr>
+						{% for testRecord in testRecords %}
+						<tr class="tablerow test_{{ testRecord.processingState }}" id="{{ testRecord.id }}">
+							<td id="mark1"></th>
+							<td class="testCaseName">{{ testRecord.name }}</td>
+							<td class="testCaseEnabled">{% if testRecord.enabledState == "enabled_by_user" -%}
+								by user
+							{%- elif testRecord.enabledState == "enabled_in_consequence" -%}
+								automatic
+							{%- else -%}
+								disabled
+							{%- endif %}</td>
+							<td class="testCaseResult">{{ testRecord.processingState }}</td>
+							<td class="testCaseDuration">{{ "%.3f"|format(testRecord.duration * 1000) }} ms</td>
+							<td class="testCaseDescription">{% if testRecord.description %}{{ testRecord.description }}{% endif %}</td>
+							<td id="mark2"></th>
+						</tr>
+						{% endfor %}
+					</table>
+				</div>
+
+			</div>
+
+		</div>
+
+		<div style="flex: 67%;" id="testcasediv"></div>
+
+	</div>
+
+	<script>
+		var currentMarkedRow = null
+		var currentMark1 = null;
+		var currentMark2 = null;
+
+		function displayTestCase() {
+			$("#testcasediv").load(testCaseEntryID + ".html");
+
+			if (currentMarkedRow != null) {
+				currentMark1.text("");
+				currentMark2.text("");
+				currentMarkedRow.removeClass("marked")
+			}
+			currentMarkedRow = $(this)
+			currentMarkedRow.addClass("marked")
+			currentMark1 = $(this).find("#mark1")
+			currentMark1.text("▶");
+			currentMark2 = $(this).find("#mark2")
+			currentMark2.text("◀");
+		}
+
+		$(document).ready(function() {
+
+			$("tr").click(function() {
+				testCaseEntryID = $(this).attr("id");
+				if ((testCaseEntryID == null) || (testCaseEntryID.length == 0))
+					return;
+
+				displayTestCase(testCaseEntryID)
+			});
+
+			$("g.node").on("click", function() {
+				testCaseEntryID = "test_" + $(this).find("text").html()
+
+				displayTestCase(testCaseEntryID)
+				// alert($(this).html());
+			});
+
+		})
+	</script>
+
+</body>
+</html>

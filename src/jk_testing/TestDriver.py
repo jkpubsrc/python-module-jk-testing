@@ -5,12 +5,18 @@
 
 import time
 import collections
+import subprocess
+import queue
+import datetime
 
 import jk_logging
 
 from .Annotations import *
-
-
+from .TestCaseInstance import *
+from .TestCaseCollection import *
+from .NodeMatrix import *
+from .TestResult import *
+from .TestResultCollection import *
 
 
 
@@ -21,198 +27,24 @@ getCurrentTimeMillis = lambda: int(round(time.time() * 1000))
 
 
 
-class TestCaseInstance(object):
-
-	def __init__(self, testCaseMetaData, testCaseName, testCaseCallable):
-		self.testCaseMetaData = testCaseMetaData if testCaseMetaData else ()		# stores all unprocessed dependencies
-		self.name = testCaseName													# the name of the test
-		self.testCaseCallable = testCaseCallable									# the function to execute to perform the test
-
-		self.dependencies = set()					# stores the names of the test cases this test depends on; this is a weak constraint, indicating a specific order of test cases
-		self.requires = set()						# stores the names of the test cases this test depends on; this is a strong constraint, requiring the prior success of specific test cases
-	#
-
-	def areAllDependenciesMet(self, namesOfAllTestCasesAlreadyProcessed):
-		for d in self.dependencies:
-			if d not in namesOfAllTestCasesAlreadyProcessed:
-				return False
-		return True
-	#
-
-	def runTest(self, globalVars, log):
-		print("-")
-		print()
-		#print(test)
-		nestedLog = log.descend("Running test: " + self.name + "()")
-		self.testCaseCallable(globalVars, nestedLog)
-		nestedLog.success("Tests passed.")
-		print()
-		print("-")
-	#
-
-#
-
-
-
-
-
-class TestCaseEntirety(object):
-
-	__DEFAULT_NONE_TUPLE = (None, None)
-
-	def __init__(self):
-		self._allTestCasesByName = {}					# stores names of test cases => test case records
-		self._allTestCasesByProvidedVariables = {}		# stores variable names provided by test cases => test case records
-		self._allTestCasesAdded = []					# stores test case records
-		self._orderOfProcessing = None					# stores all test case records in the order the test cases need to be processed
-	#
-
-	@property
-	def isPrepared(self):
-		return self._orderOfProcessing != None
-	#
-
-	#
-	# Use this method to append test cases. This method collects all necessary information from the test case description/meta data in order to perform
-	# determine the test case order later.
-	#
-	def add(self, testCaseInstance, bEnabled = True):
-		assert isinstance(testCaseInstance, TestCaseInstance)
-		assert isinstance(bEnabled, bool)
-
-		x = [testCaseInstance, bEnabled]
-		self._allTestCasesByName[testCaseInstance.name] = x
-		self._allTestCasesAdded.append(x)
-		for a in testCaseInstance.testCaseMetaData:
-			if isinstance(a, providesVariable):
-				if a.varName in self._allTestCasesByProvidedVariables:
-					raise Exception("Test case '" + testCaseInstance.name + "' provides variable '" + a.varName + "' while test case '"
-						+ self._allTestCasesByProvidedVariables[a.varName].name + "' already provides variable '" + a.varName + "'!")
-				self._allTestCasesByProvidedVariables[a.varName] = x
-
-		# now we are no longer prepared.
-		self._unprepare()
-	#
-
-	def getTestTasksToProcess(self):
-		if self._orderOfProcessing is None:
-			return None
-		return list(self._orderOfProcessing)
-	#
-
-	def _unprepare(self):
-		for testCaseInstance, bEnabled in self._allTestCasesAdded:
-			testCaseInstance.dependencies.clear()
-		self._orderOfProcessing = None
-	#
-
-	#
-	# This method precompiles all test cases in order to execute them later as required.
-	#
-	def prepare(self, log):
-		# 1) transform:
-		#		A.runBefore(B)			->  B.dependencies.add(A)
-		#		A.runAfter(B)			->  B.dependencies.add(A)
-		#		A.requiresVariable(xyz)	->  B.dependencies.add(A) where B provides xyz
-		for testCaseInstance, bEnabled in self._allTestCasesAdded:
-			for a in testCaseInstance.testCaseMetaData:
-				if isinstance(a, runBefore):
-					b, _bEnabled = self._allTestCasesByName.get(a.testName, TestCaseEntirety.__DEFAULT_NONE_TUPLE)
-					if b is None:
-						log.error("Test case '" + testCaseInstance.name + "' refers to a non-existing test case named '" + a.testName + "'!")
-						return False
-					testCaseInstance.dependencies.add(a.testName)
-				elif isinstance(a, runAfter):
-					b, _bEnabled = self._allTestCasesByName.get(a.testName, TestCaseEntirety.__DEFAULT_NONE_TUPLE)
-					if b is None:
-						log.error("Test case '" + testCaseInstance.name + "' refers to a non-existing test case named '" + a.testName + "'!")
-						return False
-					b.dependencies.add(testCaseInstance.name)
-				elif isinstance(a, requires):
-					b, _bEnabled = self._allTestCasesByName.get(a.testName, TestCaseEntirety.__DEFAULT_NONE_TUPLE)
-					if b is None:
-						log.error("Test case '" + testCaseInstance.name + "' refers to a non-existing test case named '" + a.testName + "'!")
-						return False
-					b.dependencies.add(testCaseInstance.name)
-					testCaseInstance.requires.add(b.name)
-				elif isinstance(a, requiresVariable):
-					b, _bEnabled = self._allTestCasesByProvidedVariables.get(a.varName, TestCaseEntirety.__DEFAULT_NONE_TUPLE)
-					if b is None:
-						log.error("Test case '" + testCaseInstance.name + "' refers to variable named '" + a.varName + "' which no test case provides!")
-						return False
-					testCaseInstance.dependencies.add(b.name)
-					testCaseInstance.requires.add(b.name)
-
-		# 2) check for cycles and determine order of test case execution
-		notYetProcessed = list(self._allTestCasesAdded)
-		alreadyProcessedNames = set()
-		orderOfProcessing = []
-		while notYetProcessed:
-			notYetProcessedRemaining = []
-			for x in notYetProcessed:
-				testCaseInstance, bEnabled = x
-				if testCaseInstance.areAllDependenciesMet(alreadyProcessedNames):
-					alreadyProcessedNames.add(testCaseInstance.name)
-					orderOfProcessing.append(x)
-				else:
-					notYetProcessedRemaining.append(x)
-			if len(notYetProcessedRemaining) == len(notYetProcessed):
-				# all items have unmet dependencies!
-				log.error("Cyclic dependencies detected! The following test cases are involved in this cycle:")
-				for x in notYetProcessed:
-					testCaseInstance, bEnabled = x
-					log.error("Test case '" + testCaseInstance.name + "' depends on: " + repr(testCaseInstance.dependencies))
-				return False
-			notYetProcessed = notYetProcessedRemaining
-
-		# 3) check if all test cases are enabled that produce output required by other test cases.
-		testCaseList = list(orderOfProcessing)
-		testCaseList.reverse()						# the last test case will be put first. we process the list in reverse order.
-		for x in testCaseList:
-			testCaseInstance, bEnabled = x
-			if bEnabled:
-				for referringTestCaseName in testCaseInstance.requires:
-					self.__enableTestCaseAndPredecessors(referringTestCaseName, log)
-
-		# we end up here if everything went well.
-		self._orderOfProcessing = orderOfProcessing
-		return True
-	#
-
-	def __enableTestCaseAndPredecessors(self, testCaseName, log):
-		x = self._allTestCasesByName[testCaseName]
-		testCaseInstance, bEnabled = x
-		if not bEnabled:
-			x[1] = True
-			log.notice("Enabling test case '" + testCaseInstance.name + "' as test case '" + testCaseName + "' (and maybe other test cases) depends on it.")
-		for referringTestCaseName in testCaseInstance.requires:
-			self.__enableTestCaseAndPredecessors(referringTestCaseName, log)
-	#
-
-#
-
-
-
-
-
-
-
-TestResult = collections.namedtuple("TestResult", [ "name", "testCaseInstance", "logBuffer", "bResult"])
-
-
-
 
 class TestDriver(object):
 
 	def __init__(self):
 		self.log = jk_logging.ConsoleLogger.create(logMsgFormatter = jk_logging.COLOR_LOG_MESSAGE_FORMATTER)
+		self.__data = {}
+	#
+
+	@property
+	def data(self):
+		return self.__data
 	#
 
 	#
 	# Run tests.
 	#
-	# @param	tuple<str,bool>[] testsToRun			Tuples that define which tests to run. Each tuple contains the following entries:
-	#													* The name of the test case.
+	# @param	tuple<callable,bool>[] testsToRun		Tuples that define which tests to run. Each tuple contains the following entries:
+	#													* The test case represented by a function to run.
 	#													* A flag indicating if this test case is to be run.
 	# @return	tuple<int,int,int,int,TestResult[]>		Returns a tuple of the following structure:
 	#													* The number of tests performed (or even attempted to perform).
@@ -221,41 +53,78 @@ class TestDriver(object):
 	#													* The number of tests failed.
 	#													* list of test result records.
 	#
-	def runTests(self, testsToRun):
+	def runTests(self, testsToRun) -> TestResultCollection:
+		log2 = self.log.descend("Compiling test cases")
+		testCaseCollection = TestCaseCollection.compile(testsToRun, log2)
+		results = TestResultCollection(testCaseCollection, TestCollectionVisualizer())
+		if testCaseCollection.isFailed:
+			# prepairing tests failed!
+			log2.error("Preparations failed!")
+			return results
+		log2.success("Preparations succeeded.")
+
+		log2 = self.log.descend("Running tests ...")
+
+		variables = {}
+		theTestsToRun = testCaseCollection.enabledTestCasesToRunInDefinedOrder
+		t0 = datetime.datetime.now()
+
+		for testCaseInstance in theTestsToRun:
+			if testCaseInstance.isRoot:
+				continue
+
+			logBuffer = jk_logging.BufferLogger.create()
+			processingState = testCaseInstance.runTest(self.__data, variables, logBuffer)
+			testResult = TestResult(testCaseInstance, logBuffer)
+			logBuffer.forwardTo(log2)
+
+			results.testResults.append(testResult)
+			if processingState == EnumProcessingState.FAILED:
+				results.countTestsFailed += 1
+			elif processingState == EnumProcessingState.FAILED_CRITICALLY:
+				results.countTestsFailed += 1
+				break
+			elif processingState == EnumProcessingState.SUCCEEDED:
+				results.countTestsSucceeded += 1
+			else:
+				raise Exception()
+			results.totalTestDuration += testResult.duration
+
+		results.totalTestRuntime = (datetime.datetime.now() - t0).total_seconds()
+		return results
+	#
+
+	"""
+	def __runTests(self, testsToRun):
 		t0 = getCurrentTimeMillis()
 
 		self.log.info("Building list of all tests ...")
-		testCaseEntirety = TestCaseEntirety()
-		for test, bEnabled in testsToRun:
-			if not callable(test):
-				raise Exception("Not a callable: " + repr(test))
-			testCaseMetaData = None
-			testCaseName = str(test.__name__)
-			if test.__name__ == "TestCaseWrapper":			# note: we accept methods as well that are not a test case
-				testCaseMetaData, testCaseName = test()
-			testCaseEntirety.add(TestCaseInstance(testCaseMetaData, testCaseName, test), bEnabled)
+		testCaseCollection = TestCaseCollection()
+		for testCallable, bEnabled in testsToRun:
+			testCaseInstance = self.__parseTestCallable(testCallable, bEnabled)
+			testCaseCollection.add(testCaseInstance)
 
-		if not testCaseEntirety.prepare(self.log.descend("Preparing test execution ...")):
+		if not testCaseCollection.prepare(self.log.descend("Preparing test execution ...")):
 			self.log.error("Failed to prepare all test cases for execution.")
 			return False
 
-		#for testCaseInstance, enabled in testCaseEntirety.getTestTasksToProcess():
+		#for testCaseInstance, enabled in testCaseCollection.getTestTasksToProcess():
 		#	print("-- " + testCaseInstance.name + " : " + str(enabled))
 
 		t1 = getCurrentTimeMillis()
 
 		testsPerformedList = []
-		globalVars = {}
+		variables = {}
 		countPerformed = 0
 		countSkipped = 0
 		countSucceeded = 0
 		countFailed = 0
-		for testCaseInstance, bEnabled in testCaseEntirety.getTestTasksToProcess():
+		for testCaseInstance, bEnabled in testCaseCollection.getTestTasksToProcess():
 			if bEnabled:
 				countPerformed += 1
 				try:
 					blog = jk_logging.BufferLogger.create()
-					testCaseInstance.runTest(globalVars, jk_logging.MulticastLogger.create(self.log, blog))
+					testCaseInstance.runTest(variables, jk_logging.MulticastLogger.create(self.log, blog))
 					testsPerformedList.append(TestResult(testCaseInstance.name, testCaseInstance, blog, True))
 					countSucceeded += 1
 				except Exception as e:
@@ -283,6 +152,7 @@ class TestDriver(object):
 
 		return (countPerformed, countSkipped, countSucceeded, countFailed, testsPerformedList)
 	#
+	"""
 
 #
 

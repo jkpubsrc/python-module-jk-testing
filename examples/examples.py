@@ -2,34 +2,78 @@
 # -*- coding: utf-8 -*-
 
 
-import jk_testing
+from jk_testing import *
 
 
 
 
 
-
-@jk_testing.TestCase()
-def testCaseA(globalVars, log):
-	log.notice("We're doing some tests here ...")
+@TestCase()
+def testCaseZero(ctx):
+	ctx.log.notice("We're doing some special tests here ...")
 #
 
 
 
-@jk_testing.TestCase(
-	jk_testing.runBefore("testCaseA")
+@TestCase(
+	runAfter="testCaseZero",
+	description="This is test A",
 )
-def testCaseB(globalVars, log):
-	log.notice("We're doing some other tests here ...")
+def testCaseA(ctx):
+	ctx.log.notice("We're doing some tests here ...")
 #
 
 
 
-@jk_testing.TestCase(
-	jk_testing.requires("testCaseB")
+@TestCase(
+	runBefore="testCaseA",
 )
-def testCaseC(globalVars, log):
-	log.notice("We're doing some special tests here ...")
+def testCaseB(ctx):
+	ctx.log.notice("We're doing some other tests here ...")
+#
+
+
+
+@TestCase(
+	requires="testCaseB",
+	providesVariable="xx",
+)
+def testCaseC(ctx):
+	ctx.log.notice("We're doing some special tests here ...")
+	return {
+		"xx": "abc"
+	}
+#
+
+
+
+@TestCase(
+	RaisesException(FileNotFoundError, filename="xxx.xx"),
+	requiresVariable="xx",
+)
+def testCaseD(ctx):
+	ctx.log.notice("We're doing some special tests here ...")
+	with open("xxx.xx", "r") as f:
+		pass
+#
+
+
+
+@TestCase(
+	RaisesException(FileNotFoundError, filename="xxx.xx"),
+	requiresVariable="xx",
+)
+def testCaseD2(ctx):
+	pass
+#
+
+
+
+@TestCase()
+def testCaseE(ctx):
+	ctx.log.notice("äöüßÄÖÜ ...")
+	with open("xxx.xx", "r") as f:
+		pass
 #
 
 
@@ -42,12 +86,33 @@ def testCaseC(globalVars, log):
 
 
 
-testDriver = jk_testing.TestDriver()
-testDriver.runTests([
+
+
+
+testDriver = TestDriver()
+testDriver.data["abc"] = "abc"
+
+results = testDriver.runTests([
+	(testCaseZero, False),
 	(testCaseA, True),
 	(testCaseB, False),
-	(testCaseC, True),
+	(testCaseC, False),
+	(testCaseD2, True),
+	(testCaseD, True),
+	(testCaseE, True),
 ])
+
+reporter = TestReporterHTML()
+reporter.report(results)
+
+
+
+
+
+
+
+
+
 
 
 

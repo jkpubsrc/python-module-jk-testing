@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+	<meta charset="utf-8"/>
+</head>
+<body>
+
+	<h1>{{ testRecord.name }}</h1>
+
+	<h2>State:</h2>
+
+	<table class="details">
+		<tr>
+			<td>Enabled</td>
+			<td>{% if testRecord.enabledState == "enabled_by_user" -%}
+					by user
+				{%- elif testRecord.enabledState == "enabled_in_consequence" -%}
+					automatic
+				{%- else -%}
+					disabled
+				{%- endif %}</td>
+		</tr>
+		<tr>
+			<td>Result</td>
+			<td>{{ testRecord.processingState }}</td>
+		</tr>
+		<tr>
+			<td>Duration</td>
+			<td>{{ "%.3f"|format(testRecord.duration * 1000) }} ms</td>
+		</tr>
+		<tr>
+			<td>Description</td>
+			<td>{% if testRecord.description %}{{ testRecord.description }}{% endif %}</td>
+		</tr>
+	</table>
+
+	<h2>Log:</h2>
+
+	{% macro writeLogTimeStamp(timeStamp) -%}
+		<span class="logtimestamp">{{- "%04d-%02d-%02d %02d:%02d:%02d %03d%03d"|format(
+			timeStamp.year,
+			timeStamp.month,
+			timeStamp.day,
+			timeStamp.hour,
+			timeStamp.minute,
+			timeStamp.second,
+			timeStamp.ms,
+			timeStamp.us
+		) -}}</span>
+	{%- endmacro %}
+
+	{% macro writeLogLevel(logLevel) -%}
+		<span class="loglevel">{{- logLevel -}}</span>
+	{%- endmacro %}
+
+	{% macro writeLogException(exceptionClassName) -%}
+		<span class="logexception">{{- exceptionClassName -}}</span>
+	{%- endmacro %}
+
+	{% macro writeLogText(logText) -%}
+		<span class="logtext">{{- logText -}}</span>
+	{%- endmacro %}
+
+	{% macro writeStackElement(stackElement) -%}
+		<li><span class="logstackfile">{{ stackElement.file }}:{{ stackElement.line }}</span> : <span class="logstackcode">{{ stackElement.sourcecode }}</span></li>
+	{%- endmacro %}
+
+	{% macro writeLogEntry(logEntry) -%}
+		<li class="logentry logentry_{{logEntry.loglevel}}">
+			{% if logEntry.type == "txt" %}
+				{{ writeLogTimeStamp(logEntry.timestamp) }}&nbsp;{{ writeLogLevel(logEntry.loglevel) }}&nbsp;:&nbsp;{{ writeLogText(logEntry.text) }}
+			{% elif logEntry.type == "ex" %}
+				{{ writeLogTimeStamp(logEntry.timestamp) }}&nbsp;{{ writeLogLevel(logEntry.loglevel) }}&nbsp;:&nbsp;{{ writeLogException(logEntry.exception) }}
+				<ul class="log">
+					<li>{{ writeLogText(logEntry.text) }}</li>
+					{% for stackElement in logEntry.stacktrace %}
+						{{ writeStackElement(stackElement) }}
+					{% endfor %}
+				</ul>
+			{% else %}
+				{{ writeLogTimeStamp(logEntry.timestamp) }}&nbsp;{{ writeLogLevel(logEntry.loglevel) }}&nbsp;:&nbsp;{{ writeLogText(logEntry.text) }}
+				{% for subLogEntry in logEntry.children %}
+					<ul class="log">
+						{{ writeLogEntry(subLogEntry) }}
+					</ul>
+				{% endfor %}
+			{% endif %}
+		</li>
+	{%- endmacro %}
+
+	<ul class="log">
+		{% for logEntry in testRecord.logBuffer %}
+			{{ writeLogEntry(logEntry) }}
+		{% endfor %}
+	</ul>
+
+</body>
+</html>
