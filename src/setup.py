@@ -1,6 +1,4 @@
-﻿import os
-import shutil
-from setuptools import setup
+﻿from setuptools import setup
 
 
 def readme():
@@ -10,13 +8,13 @@ def readme():
 
 
 setup(name="jk_testing",
-	version="0.2019.1.22",
+	version="0.2019.1.22.1",
 	description="This python module provides a simple to use infrastructure for running unit tests.",
 	author="Jürgen Knauth",
 	author_email="pubsrc@binary-overflow.de",
 	license="Apache 2.0",
 	url="https://github.com/jkpubsrc/python-module-jk-testing",
-	download_url="https://github.com/jkpubsrc/python-module-jk-testing/tarball/0.2019.1.22",
+	download_url="https://github.com/jkpubsrc/python-module-jk-testing/tarball/0.2019.1.22.1",
 	keywords=[
 		"testing", "unittests", "tests"
 	],
