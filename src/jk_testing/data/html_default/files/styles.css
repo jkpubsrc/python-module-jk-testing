@@ -1,0 +1,140 @@
+body {
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+	font-size: 13px;
+	background-color: #f0f0f0;
+}
+
+
+table.summary {
+	background-color: #fff;
+	border-collapse: collapse;
+}
+
+
+table.summary td {
+	padding-left: 4px;
+	padding-right: 4px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+
+table.details {
+	border: black 1px solid;
+	border-collapse: collapse;
+}
+
+
+table.details td {
+	border: black 1px solid;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+
+table.overview {
+	border: black 1px solid;
+	border-collapse: collapse;
+}
+
+
+table.overview td {
+	border: black 1px solid;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+
+table.overview th {
+	border: black 1px solid;
+	padding-left: 8px;
+	padding-right: 8px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+table.overview th.testCaseMarker {
+	color: transparent;
+}
+
+
+table.overview tr.heading {
+	background-color: #c8c8c8;
+}
+
+
+table.overview tr.tablerow:hover {
+	color: darkgoldenrod;
+	cursor: pointer;
+}
+
+
+table.overview tr.marked {
+	color: darkgoldenrod;
+}
+
+
+/* processing state */
+
+
+table.overview tr.test_failed_critically {
+	background-color: #ff4040;
+}
+table.overview tr.test_not_processed {
+	background-color: #a0a0a0;
+}
+table.overview tr.test_failed {
+	background-color: #ffc0c0;
+}
+table.overview tr.test_succeeded {
+	background-color: #c0ffc0;
+}
+
+
+/* ---- */
+
+
+.logentry {
+}
+
+.logentry_ERROR, .logentry_STDERR, .logentry_EXCEPTION {
+	color: #800000;
+}
+
+.logentry_INFO, .logentry_STDOUT {
+	color: #000000;
+}
+
+.logentry_NOTICE, .logentry_TRACE, .logentry_DEBUG {
+	color: #808080;
+}
+
+.logentry_WARNING {
+	color: #ff8000;
+}
+
+.logentry_SUCCESS {
+	color: #008000;
+}
+
+.logexception {
+}
+
+.loglevel {
+	font-family: 'Courier New', Courier, monospace;
+}
+
+.logtimestamp {
+}
+
+.logstackfile {
+}
+
+.logstackcode {
+	font-family: 'Courier New', Courier, monospace;
+}
+
+

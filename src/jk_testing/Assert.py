@@ -24,6 +24,22 @@ class _Assert(object):
 			self.__log = log
 	#
 
+	def isIn(self, value, valueList, message = None):
+		Assert.l_isIn(self.__log, value, valueList, message)
+	#
+
+	def isNotIn(self, value, valueList, message = None):
+		Assert.l_isNotIn(self.__log, value, valueList, message)
+	#
+
+	def raisesException(self, function, arguments, message = None):
+		Assert.l_raisesException(self.__log, function, arguments, message)
+	#
+
+	def isCallable(self, value, message = None):
+		Assert.l_isCallable(self.__log, value, message)
+	#
+
 	def isInstance(self, value, typeOrTypes, message = None):
 		Assert.l_isInstance(self.__log, value, typeOrTypes, message)
 	#
@@ -80,6 +96,174 @@ class Assert(object):
 		return c
 	#
 	"""
+
+	@staticmethod
+	def isIn(value, valueList, message = None, log = None):
+		bSuccess = value in valueList
+
+		if not bSuccess:
+			if message is None:
+				message = ""
+			else:
+				message += " :: "
+			message = "ASSERTION ERROR :: " + message + "Value is " + repr(value) + " so value is not an element of list " + repr(valueList) + "!"
+			if log != None:
+				if callable(log):
+					log(message)
+				else:
+					log.error(message)
+			else:
+				print(message)
+			raise AssertionException(message)
+	#
+
+	@staticmethod
+	def l_isIn(log, value, valueList, message = None):
+		bSuccess = value in valueList
+
+		if not bSuccess:
+			if message is None:
+				message = ""
+			else:
+				message += " :: "
+			message = "ASSERTION ERROR :: " + message + "Value is " + repr(value) + " so value is not an element of list " + repr(valueList) + "!"
+			if log != None:
+				if callable(log):
+					log(message)
+				else:
+					log.error(message)
+			else:
+				print(message)
+			raise AssertionException(message)
+	#
+
+	@staticmethod
+	def isNotIn(value, valueList, message = None, log = None):
+		bSuccess = value not in valueList
+
+		if not bSuccess:
+			if message is None:
+				message = ""
+			else:
+				message += " :: "
+			message = "ASSERTION ERROR :: " + message + "Value is " + repr(value) + " so value is not an element of list " + repr(valueList) + "!"
+			if log != None:
+				if callable(log):
+					log(message)
+				else:
+					log.error(message)
+			else:
+				print(message)
+			raise AssertionException(message)
+	#
+
+	@staticmethod
+	def l_isNotIn(log, value, valueList, message = None):
+		bSuccess = value not in valueList
+
+		if not bSuccess:
+			if message is None:
+				message = ""
+			else:
+				message += " :: "
+			message = "ASSERTION ERROR :: " + message + "Value is " + repr(value) + " so value is not an element of list " + repr(valueList) + "!"
+			if log != None:
+				if callable(log):
+					log(message)
+				else:
+					log.error(message)
+			else:
+				print(message)
+			raise AssertionException(message)
+	#
+
+	@staticmethod
+	def raisesException(function, arguments, message = None, log = None):
+		bSuccess = True
+		try:
+			function(*arguments)
+			bSuccess = False
+		except Exception as ee:
+			pass
+
+		if not bSuccess:
+			if message is None:
+				message = ""
+			else:
+				message += " :: "
+			message = "ASSERTION ERROR :: " + message + "No exception was raised!"
+			if log != None:
+				if callable(log):
+					log(message)
+				else:
+					log.error(message)
+			else:
+				print(message)
+			raise AssertionException(message)
+	#
+
+	@staticmethod
+	def l_raisesException(log, function, arguments, message = None):
+		bSuccess = True
+		try:
+			function(*arguments)
+			bSuccess = False
+		except Exception as ee:
+			pass
+
+		if not bSuccess:
+			if message is None:
+				message = ""
+			else:
+				message += " :: "
+			message = "ASSERTION ERROR :: " + message + "No exception was raised!"
+			if log != None:
+				if callable(log):
+					log(message)
+				else:
+					log.error(message)
+			else:
+				print(message)
+			raise AssertionException(message)
+	#
+
+	@staticmethod
+	def isCallable(value, message = None, log = None):
+		if callable(value):
+			return
+		if message is None:
+			message = ""
+		else:
+			message += " :: "
+		message = "ASSERTION ERROR :: " + message + "Value is not a callable but of type " + str(value)
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def l_isCallable(log, value, message = None):
+		if callable(value):
+			return
+		if message is None:
+			message = ""
+		else:
+			message += " :: "
+		message = "ASSERTION ERROR :: " + message + "Value is not a callable but of type " + str(value)
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
 
 	@staticmethod
 	def isInstance(value, typeOrTypes, message = None, log = None):

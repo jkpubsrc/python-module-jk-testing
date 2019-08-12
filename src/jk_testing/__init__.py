@@ -17,5 +17,5 @@ from .TestReporterHTML import TestReporterHTML
 
 
 
-__version__ = "0.2019.1.22.1"
+__version__ = "0.2019.8.12"
 
