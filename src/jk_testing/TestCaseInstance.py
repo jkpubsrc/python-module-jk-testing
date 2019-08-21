@@ -145,7 +145,7 @@ class TestCaseInstance(object):
 		ctx = TestContext(data, variables, nestedLog)
 		self.timeStamp = time.time()
 		try:
-			ret = self.testCaseCallable(ctx)
+			ret = self.testCaseCallable(True, ctx)
 			self.duration = time.time() - self.timeStamp
 
 			if self.possibleExceptions:

@@ -168,11 +168,25 @@ class TestCase(object):
 	def __call__(self, original_func):
 		decorator_self = self
 		def TestCaseWrapper(*args, **kwargs):
-			if len(args) == 0:
-				return (decorator_self.testAspects, original_func.__name__)
-			#self.testAspects = decorator_self.testAspects
+			if isinstance(args[0], bool):
+				# function
+				assert len(args) >= 1
+				args = list(args)
+				if args[0]:
+					del args[0]
+					return original_func(*args,**kwargs)
+				else:
+					return (decorator_self.testAspects, original_func.__name__)
 			else:
-				return original_func(*args,**kwargs)
+				# method
+				assert len(args) >= 2
+				assert isinstance(args[1], bool)
+				args = list(args)
+				if args[1]:
+					del args[1]
+					return original_func(*args,**kwargs)
+				else:
+					return (decorator_self.testAspects, original_func.__name__)
 		return TestCaseWrapper
 	#
 

@@ -71,8 +71,41 @@ class TestCaseCollection(object):
 			raise Exception("Not a callable: " + repr(theCallable))
 		assert isinstance(bEnabled, bool)
 
+		bIsObject = True
+		orgObj = None
+		try:
+			theCallable.__name__ == "TestCaseWrapper"
+			bIsObject = False
+		except:
+			pass
+
+		if bIsObject:
+			orgObj = theCallable
+			theCallable = theCallable.__call__
+
 		if theCallable.__name__ == "TestCaseWrapper":
-			testCaseAspects, testCaseName = theCallable()
+			testCaseAspects, testCaseName = theCallable(False)
+
+			if bIsObject:
+				newTestCaseName = None
+				try:
+					newTestCaseName = orgObj.name()
+				except:
+					pass
+				if newTestCaseName is None:
+					try:
+						newTestCaseName = orgObj.name
+					except:
+						pass
+				if newTestCaseName:
+					testCaseName = newTestCaseName
+				else:
+					objName = theCallable.__class__.__name__
+					if testCaseName == "__call__":
+						testCaseName = objName
+					else:
+						testCaseName = objName + "." + testCaseName
+
 			return TestCaseInstance(False, testCaseName, testCaseAspects, theCallable, bEnabled)
 		else:
 			# NOTE: we accept methods as well that are not a test case
