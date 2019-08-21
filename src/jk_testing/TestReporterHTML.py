@@ -1,6 +1,11 @@
 import os
 import sys
 import shutil
+import http.server
+import socketserver
+import webbrowser
+import urllib
+import posixpath
 
 import jk_logging
 import jk_json
@@ -11,6 +16,64 @@ from .TestResultCollection import *
 from .TestResult import *
 
 
+
+
+class ResultsHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+
+	def __init__(self, rootDirPath:str, request, client_address, server):
+		self.__rootDirPath = os.path.realpath(rootDirPath)
+		super().__init__(request, client_address, server)
+	#
+
+	def translate_path(self, path):
+		"""Translate a /-separated PATH to the local filename syntax.
+
+		Components that mean special things to the local file system
+		(e.g. drive or directory names) are ignored.  (XXX They should
+		probably be diagnosed.)
+
+		"""
+		# abandon query parameters
+		path = path.split('?',1)[0]
+		path = path.split('#',1)[0]
+		# Don't forget explicit trailing slash when normalizing. Issue17324
+		trailing_slash = path.rstrip().endswith('/')
+		try:
+			path = urllib.parse.unquote(path, errors='surrogatepass')
+		except UnicodeDecodeError:
+			path = urllib.parse.unquote(path)
+		path = posixpath.normpath(path)
+		words = path.split('/')
+		words = filter(None, words)
+		path = self.__rootDirPath
+		for word in words:
+			if os.path.dirname(word) or word in (os.curdir, os.pardir):
+				# Ignore components that are not a simple file/directory name
+				continue
+			path = os.path.join(path, word)
+		if trailing_slash:
+			path += '/'
+		return path
+	#	
+
+#
+
+
+class ResultsHTTPServer(socketserver.TCPServer):
+
+	allow_reuse_address = True
+
+	def __init__(self, rootDirPath:str):
+		super().__init__(("", 9096), ResultsHTTPRequestHandler)
+		self.__rootDirPath = rootDirPath
+	#
+
+	def finish_request(self, request, client_address):
+		"""Finish one request by instantiating RequestHandlerClass."""
+		self.RequestHandlerClass(self.__rootDirPath, request, client_address, self)
+	#
+
+#
 
 
 
@@ -31,7 +94,7 @@ class TestReporterHTML(object):
 		self.__templateOverview = self.__env.get_template("index.html")
 	#
 
-	def report(self, testResultCollection:TestResultCollection, outDirPath:str="results"):
+	def report(self, testResultCollection:TestResultCollection, outDirPath:str="results", showInWebBrowser:bool=True):
 		if not os.path.isabs(outDirPath):
 			outDirPath = os.path.abspath(outDirPath)
 
@@ -49,6 +112,14 @@ class TestReporterHTML(object):
 			self.__writeResultFile(testResult, outDirPath)
 
 		self.__writeOverviewFile(testResultCollection, outDirPath)
+
+		# ----
+
+		if showInWebBrowser:
+			httpd = ResultsHTTPServer(outDirPath)
+			print("Running web server. For results see: http://localhost:9096/")
+			webbrowser.open("http://localhost:9096/", new=1)
+			httpd.serve_forever()
 	#
 
 	def __writeResultFile(self, testResult:TestResult, outDirPath:str):
