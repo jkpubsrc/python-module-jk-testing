@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
+
 
 
 
@@ -98,7 +98,7 @@ class Assert(object):
 	"""
 
 	@staticmethod
-	def isIn(value, valueList, message = None, log = None):
+	def isIn(value, valueList, message = None, log = None, identifier:str = None):
 		bSuccess = value in valueList
 
 		if not bSuccess:
@@ -107,6 +107,8 @@ class Assert(object):
 			else:
 				message += " :: "
 			message = "ASSERTION ERROR :: " + message + "Value is " + repr(value) + " so value is not an element of list " + repr(valueList) + "!"
+			if identifier:
+				message = "<" + identifier + "> " + message
 			if log != None:
 				if callable(log):
 					log(message)
@@ -118,7 +120,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def l_isIn(log, value, valueList, message = None):
+	def l_isIn(log, value, valueList, message = None, identifier:str = None):
 		bSuccess = value in valueList
 
 		if not bSuccess:
@@ -127,6 +129,8 @@ class Assert(object):
 			else:
 				message += " :: "
 			message = "ASSERTION ERROR :: " + message + "Value is " + repr(value) + " so value is not an element of list " + repr(valueList) + "!"
+			if identifier:
+				message = "<" + identifier + "> " + message
 			if log != None:
 				if callable(log):
 					log(message)
@@ -138,7 +142,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def isNotIn(value, valueList, message = None, log = None):
+	def isNotIn(value, valueList, message = None, log = None, identifier:str = None):
 		bSuccess = value not in valueList
 
 		if not bSuccess:
@@ -147,6 +151,8 @@ class Assert(object):
 			else:
 				message += " :: "
 			message = "ASSERTION ERROR :: " + message + "Value is " + repr(value) + " so value is not an element of list " + repr(valueList) + "!"
+			if identifier:
+				message = "<" + identifier + "> " + message
 			if log != None:
 				if callable(log):
 					log(message)
@@ -158,7 +164,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def l_isNotIn(log, value, valueList, message = None):
+	def l_isNotIn(log, value, valueList, message = None, identifier:str = None):
 		bSuccess = value not in valueList
 
 		if not bSuccess:
@@ -167,6 +173,8 @@ class Assert(object):
 			else:
 				message += " :: "
 			message = "ASSERTION ERROR :: " + message + "Value is " + repr(value) + " so value is not an element of list " + repr(valueList) + "!"
+			if identifier:
+				message = "<" + identifier + "> " + message
 			if log != None:
 				if callable(log):
 					log(message)
@@ -178,7 +186,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def raisesException(function, arguments, message = None, log = None):
+	def raisesException(function, arguments, message = None, log = None, identifier:str = None):
 		bSuccess = True
 		try:
 			function(*arguments)
@@ -192,6 +200,8 @@ class Assert(object):
 			else:
 				message += " :: "
 			message = "ASSERTION ERROR :: " + message + "No exception was raised!"
+			if identifier:
+				message = "<" + identifier + "> " + message
 			if log != None:
 				if callable(log):
 					log(message)
@@ -203,7 +213,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def l_raisesException(log, function, arguments, message = None):
+	def l_raisesException(log, function, arguments, message = None, identifier:str = None):
 		bSuccess = True
 		try:
 			function(*arguments)
@@ -217,6 +227,8 @@ class Assert(object):
 			else:
 				message += " :: "
 			message = "ASSERTION ERROR :: " + message + "No exception was raised!"
+			if identifier:
+				message = "<" + identifier + "> " + message
 			if log != None:
 				if callable(log):
 					log(message)
@@ -228,7 +240,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def isCallable(value, message = None, log = None):
+	def isCallable(value, message = None, log = None, identifier:str = None):
 		if callable(value):
 			return
 		if message is None:
@@ -236,6 +248,8 @@ class Assert(object):
 		else:
 			message += " :: "
 		message = "ASSERTION ERROR :: " + message + "Value is not a callable but of type " + str(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -247,7 +261,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def l_isCallable(log, value, message = None):
+	def l_isCallable(log, value, message = None, identifier:str = None):
 		if callable(value):
 			return
 		if message is None:
@@ -255,6 +269,8 @@ class Assert(object):
 		else:
 			message += " :: "
 		message = "ASSERTION ERROR :: " + message + "Value is not a callable but of type " + str(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -266,7 +282,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def isInstance(value, typeOrTypes, message = None, log = None):
+	def isInstance(value, typeOrTypes, message = None, log = None, identifier:str = None):
 		if isinstance(value, typeOrTypes):
 			return
 		if issubclass(type(value), typeOrTypes):
@@ -276,6 +292,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is of type " + str(type(value)) + " and not of type " + str(typeOrTypes)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -287,7 +305,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def l_isInstance(log, value, typeOrTypes, message = None):
+	def l_isInstance(log, value, typeOrTypes, message = None, identifier:str = None):
 		if isinstance(value, typeOrTypes):
 			return
 		if message is None:
@@ -295,6 +313,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is of type " + str(type(value)) + " and not of type " + str(typeOrTypes)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -306,7 +326,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def isEqual(value, otherValue, message = None, log = None):
+	def isEqual(value, otherValue, message = None, log = None, identifier:str = None):
 		if value == otherValue:
 			return
 		if message is None:
@@ -314,6 +334,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " and not " + repr(otherValue) + " as expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -325,7 +347,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def l_isEqual(log, value, otherValue, message = None):
+	def l_isEqual(log, value, otherValue, message = None, identifier:str = None):
 		if value == otherValue:
 			return
 		if message is None:
@@ -333,6 +355,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " and not " + repr(otherValue) + " as expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -344,7 +368,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def isNotEqual(value, otherValue, message = None, log = None):
+	def isNotEqual(value, otherValue, message = None, log = None, identifier:str = None):
 		if value != otherValue:
 			return
 		if message is None:
@@ -352,6 +376,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which is not expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -363,7 +389,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def l_isNotEqual(log, value, otherValue, message = None):
+	def l_isNotEqual(log, value, otherValue, message = None, identifier:str = None):
 		if value != otherValue:
 			return
 		if message is None:
@@ -371,6 +397,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which is not expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -382,7 +410,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def isNone(value, message = None, log = None):
+	def isNone(value, message = None, log = None, identifier:str = None):
 		if value is None:
 			return
 		if message is None:
@@ -390,6 +418,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is not None as expected: " + repr(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -401,7 +431,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def l_isNone(log, value, message = None):
+	def l_isNone(log, value, message = None, identifier:str = None):
 		if value is None:
 			return
 		if message is None:
@@ -409,6 +439,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is not None as expected: " + repr(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -420,7 +452,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def isNotNone(value, message = None, log = None):
+	def isNotNone(value, message = None, log = None, identifier:str = None):
 		if value is not None:
 			return
 		if message is None:
@@ -428,6 +460,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is None which is not expected: " + repr(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -439,7 +473,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def l_isNotNone(log, value, message = None):
+	def l_isNotNone(log, value, message = None, identifier:str = None):
 		if value is not None:
 			return
 		if message is None:
@@ -447,6 +481,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is None which is not expected: " + repr(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -458,7 +494,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def isTrue(value, message = None, log = None):
+	def isTrue(value, message = None, log = None, identifier:str = None):
 		if value is True:
 			return
 		if message is None:
@@ -466,6 +502,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is not true as expected: " + repr(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -477,7 +515,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def l_isTrue(log, value, message = None):
+	def l_isTrue(log, value, message = None, identifier:str = None):
 		if value is True:
 			return
 		if message is None:
@@ -485,6 +523,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is not true as expected: " + repr(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -496,7 +536,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def isFalse(value, message = None, log = None):
+	def isFalse(value, message = None, log = None, identifier:str = None):
 		if value is False:
 			return
 		if message is None:
@@ -504,6 +544,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is not false as expected: " + repr(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)
@@ -515,7 +557,7 @@ class Assert(object):
 	#
 
 	@staticmethod
-	def l_isFalse(log, value, message = None):
+	def l_isFalse(log, value, message = None, identifier:str = None):
 		if value is False:
 			return
 		if message is None:
@@ -523,6 +565,8 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is not false as expected: " + repr(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
 		if log != None:
 			if callable(log):
 				log(message)

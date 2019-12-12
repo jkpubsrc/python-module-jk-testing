@@ -56,12 +56,9 @@
 		
 			<div id="tabs">
 				<ul>
-					<li><a href="#tabs-1">Graph</a></li>
 					<li><a href="#tabs-2">Table</a></li>
+					<li><a href="#tabs-1">Graph</a></li>
 				</ul>
-				<div id="tabs-1" style="margin-bottom: 20px">
-					{{- svg|safe -}}
-				</div>
 				<div id="tabs-2">
 					<table class="overview">
 						<tr class="heading">
@@ -91,6 +88,9 @@
 						</tr>
 						{% endfor %}
 					</table>
+				</div>
+				<div id="tabs-1" style="margin-bottom: 20px">
+					{{- svg|safe -}}
 				</div>
 
 			</div>

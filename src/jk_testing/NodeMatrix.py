@@ -339,8 +339,8 @@ class _GraphVizConverter(object):
 
 		ret = [
 			"strict digraph {",
-			#"\trankdir=LR;"
-			"\trankdir=TB;"
+			"\trankdir=LR;"
+			#"\trankdir=TB;"
 		]
 
 		ret.append("")
