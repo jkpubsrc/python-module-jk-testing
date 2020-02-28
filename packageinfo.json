@@ -1,0 +1,61 @@
+{
+	"language": "python3",
+	"name": "jk_testing",
+	"version": "0.2020.1.20",
+	"meta": {
+		"description": "This python module provides a simple to use infrastructure for running unit tests.",
+		"keywords": [
+			"testing",
+			"unittests",
+			"tests"
+		],
+		"license": "Apache 2.0",
+		"development_status": "stable",
+		"authors": [
+			{
+				"name": "Jürgen Knauth",
+				"email": "pubsrc@binary-overflow.de"
+			}
+		],
+		"wiki": {
+			"page": "DevDocs:jk_testing"
+		}
+	},
+	"repositories": [
+		{
+			"type": "github",
+			"user": "jkpubsrc",
+			"project": "python-module-jk-testing",
+			"devon_publish": false
+		},
+		{
+			"type": "pypy",
+			"project": "jk_testing",
+			"devon_publish": false
+		}
+	],
+	"source": {
+		"packages": [
+			"jk_testing"
+		],
+		"extra_data_files": [
+			"data/*",
+			"data/html_default/*",
+			"data/html_default/files/*",
+			"data/html_default/files/images/*",
+			"data/html_default/templates/*"
+		]
+	},
+	"requirements": {
+		"python_packages": [
+			"jk_logging",
+			"jk_temporary",
+			"jk_json",
+			"graphviz",
+			"jinja2"
+		],
+		"python_packages_dev": [
+		]
+	}
+}
+

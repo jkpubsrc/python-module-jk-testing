@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 
@@ -17,5 +17,4 @@ from .TestReporterHTML import TestReporterHTML
 
 
 
-__version__ = "0.2019.8.21"
-
+__version__ = "0.2020.1.20"

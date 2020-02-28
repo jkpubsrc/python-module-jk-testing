@@ -1,2 +1,2 @@
-include README.rst
-include staticfiles
+include README.md
+include LICENSE.txt
