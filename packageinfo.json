@@ -1,7 +1,7 @@
 {
 	"language": "python3",
 	"name": "jk_testing",
-	"version": "0.2020.1.20",
+	"version": "0.2020.6.9",
 	"meta": {
 		"description": "This python module provides a simple to use infrastructure for running unit tests.",
 		"keywords": [

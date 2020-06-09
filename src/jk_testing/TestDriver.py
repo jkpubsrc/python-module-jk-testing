@@ -91,6 +91,18 @@ class TestDriver(object):
 			results.totalTestDuration += testResult.duration
 
 		results.totalTestRuntime = (datetime.datetime.now() - t0).total_seconds()
+
+		log2 = self.log.descend("Summary")
+		log2.info("Number of tests performed: " + str(results.countTestsPerformed))
+		if results.countTestsFailed > 0:
+			log2.info("Number of tests succeeded: " + str(results.countTestsSucceeded))
+			log2.error("Number of tests failed: " + str(results.countTestsFailed))
+		else:
+			log2.success("Number of tests succeeded: " + str(results.countTestsSucceeded))
+			log2.info("Number of tests failed: " + str(results.countTestsFailed))
+		log2.info("Total duration: " + jk_utils.formatTime(results.totalTestRuntime))
+		log2.info("Average duration of single test: " + str(round(results.totalTestRuntime * 1000 / results.countTestsPerformed, 1)) + " ms")
+
 		return results
 	#
 

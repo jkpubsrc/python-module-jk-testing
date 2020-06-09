@@ -24,7 +24,7 @@ setup(
 		"Topic :: Software Development :: Testing",
 	],
 	description = "This python module provides a simple to use infrastructure for running unit tests.",
-	download_url = "https://github.com/jkpubsrc/python-module-jk-testing/tarball/0.2020.1.20",
+	download_url = "https://github.com/jkpubsrc/python-module-jk-testing/tarball/0.2020.6.9",
 	include_package_data = True,
 	install_requires = [
 		"jk_logging",
@@ -53,7 +53,7 @@ setup(
 		"jk_testing",
 	],
 	url = "https://github.com/jkpubsrc/python-module-jk-testing",
-	version = "0.2020.1.20",
+	version = "0.2020.6.9",
 	zip_safe = False,
 	long_description = readme(),
 	long_description_content_type="text/markdown",
