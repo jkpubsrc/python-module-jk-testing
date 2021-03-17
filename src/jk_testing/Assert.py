@@ -3,13 +3,9 @@
 
 
 
-class AssertionException(Exception):
+from .AssertionException import AssertionException
 
-	def __init__(self, message):
-		super().__init__(message)
-	#
 
-#
 
 
 
@@ -46,6 +42,22 @@ class _Assert(object):
 
 	def isEqual(self, value, otherValue, message = None):
 		Assert.l_isEqual(self.__log, value, otherValue, message)
+	#
+
+	def isGreater(self, value, otherValue, message = None):
+		Assert.l_isGreater(self.__log, value, otherValue, message)
+	#
+
+	def isGreaterOrEqual(self, value, otherValue, message = None):
+		Assert.l_isGreaterOrEqual(self.__log, value, otherValue, message)
+	#
+
+	def isSmaller(self, value, otherValue, message = None):
+		Assert.l_isSmaller(self.__log, value, otherValue, message)
+	#
+
+	def isSmallerOrEqual(self, value, otherValue, message = None):
+		Assert.l_isSmallerOrEqual(self.__log, value, otherValue, message)
 	#
 
 	def isNotEqual(self, value, otherValue, message = None):
@@ -397,6 +409,174 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which is not expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def isGreater(value, otherValue, message = None, log = None, identifier:str = None):
+		if value > otherValue:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which not greater than " + repr(otherValue) + " as expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def l_isGreater(log, value, otherValue, message = None, identifier:str = None):
+		if value > otherValue:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which not greater than " + repr(otherValue) + " as expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def isGreaterOrEqual(value, otherValue, message = None, log = None, identifier:str = None):
+		if value >= otherValue:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which not greater or equal to " + repr(otherValue) + " as expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def l_isGreaterOrEqual(log, value, otherValue, message = None, identifier:str = None):
+		if value >= otherValue:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which not greater or equal to " + repr(otherValue) + " as expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def isSmaller(value, otherValue, message = None, log = None, identifier:str = None):
+		if value < otherValue:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which not smaller than " + repr(otherValue) + " as expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def l_isSmaller(log, value, otherValue, message = None, identifier:str = None):
+		if value < otherValue:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which not smaller than " + repr(otherValue) + " as expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def isSmallerOrEqual(value, otherValue, message = None, log = None, identifier:str = None):
+		if value <= otherValue:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which not smaller or equal to " + repr(otherValue) + " as expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def l_isSmallerOrEqual(log, value, otherValue, message = None, identifier:str = None):
+		if value <= otherValue:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which not smaller or equal to " + repr(otherValue) + " as expected!"
 		if identifier:
 			message = "<" + identifier + "> " + message
 		if log != None:

@@ -21,10 +21,10 @@ setup(
 	classifiers = [
 		"Development Status :: 5 - Production/Stable",
 		"License :: OSI Approved :: Apache Software License",
+		"Programming Language :: Python :: 3",
 		"Topic :: Software Development :: Testing",
 	],
 	description = "This python module provides a simple to use infrastructure for running unit tests.",
-	download_url = "https://github.com/jkpubsrc/python-module-jk-testing/tarball/0.2020.6.9",
 	include_package_data = True,
 	install_requires = [
 		"jk_logging",
@@ -38,7 +38,7 @@ setup(
 		"unittests",
 		"tests",
 	],
-	license = "Apache 2.0",
+	license = "Apache2",
 	name = "jk_testing",
 	package_data = {
 		"": [
@@ -52,8 +52,7 @@ setup(
 	packages = [
 		"jk_testing",
 	],
-	url = "https://github.com/jkpubsrc/python-module-jk-testing",
-	version = "0.2020.6.9",
+	version = "0.2021.3.17",
 	zip_safe = False,
 	long_description = readme(),
 	long_description_content_type="text/markdown",

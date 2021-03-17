@@ -1,4 +1,4 @@
-﻿jk_testing
+jk_testing
 ==========
 
 Introduction

@@ -1,9 +1,12 @@
-﻿#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+﻿
+
+__version__ = "0.2020.6.9"
 
 
 
-from .Assert import Assert, AssertionException
+from .AssertionException import AssertionException
+from .Assert import Assert
+from .AssertX import AssertX
 from .Annotations import *
 
 from .TestDriver import TestDriver
@@ -17,4 +20,3 @@ from .TestReporterHTML import TestReporterHTML
 
 
 
-__version__ = "0.2020.6.9"

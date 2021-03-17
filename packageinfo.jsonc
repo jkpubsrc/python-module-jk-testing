@@ -1,0 +1,64 @@
+{
+	"documentation": [],
+	"magic": {
+		"magic": "packageinfo",
+		"version": 2
+	},
+	"meta": {
+		"authors": [
+			{
+				"email": "pubsrc@binary-overflow.de",
+				"name": "J\u00fcrgen Knauth"
+			}
+		],
+		"description": "This python module provides a simple to use infrastructure for running unit tests.",
+		"development_status": "stable",
+		"keywords": [
+			"testing",
+			"unittests",
+			"tests"
+		],
+		"language": "python3",
+		"license": "Apache2",
+		"name": "jk_testing",
+		"packageClass": "python-module",
+		"version": "0.2021.3.17"
+	},
+	"repositories": [
+		{
+			"devon_publish": false,
+			"project": "python-module-jk-testing",
+			"type": "github",
+			"user": "jkpubsrc"
+		},
+		{
+			"devon_publish": false,
+			"project": "jk_testing",
+			"type": "pypi"
+		}
+	],
+	"requirements": {
+		"python_packages": [
+			"jk_logging",
+			"jk_temporary",
+			"jk_json",
+			"graphviz",
+			"jinja2"
+		],
+		"python_packages_dev": [],
+		"system_apt_packages": []
+	},
+	"source": {
+		"extra_binary_files": [],
+		"extra_data_files": [
+			"data/*",
+			"data/html_default/*",
+			"data/html_default/files/*",
+			"data/html_default/files/images/*",
+			"data/html_default/templates/*"
+		],
+		"packages": [
+			"jk_testing"
+		]
+	}
+}
