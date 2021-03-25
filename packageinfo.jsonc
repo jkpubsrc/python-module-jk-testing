@@ -22,7 +22,7 @@
 		"license": "Apache2",
 		"name": "jk_testing",
 		"packageClass": "python-module",
-		"version": "0.2021.3.17"
+		"version": "0.2021.3.25"
 	},
 	"repositories": [
 		{
@@ -43,7 +43,8 @@
 			"jk_temporary",
 			"jk_json",
 			"graphviz",
-			"jinja2"
+			"jinja2",
+			"jk_terminal_essentials",
 		],
 		"python_packages_dev": [],
 		"system_apt_packages": []
@@ -58,7 +59,8 @@
 			"data/html_default/templates/*"
 		],
 		"packages": [
-			"jk_testing"
+			"jk_testing",
+			"jk_testing.utils",
 		]
 	}
 }
