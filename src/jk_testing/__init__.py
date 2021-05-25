@@ -1,6 +1,6 @@
 ﻿
 
-__version__ = "0.2021.3.25"
+__version__ = "0.2021.5.25"
 
 
 
@@ -17,5 +17,4 @@ from .EnumProcessingState import EnumProcessingState
 from .EnumEnabledState import EnumEnabledState
 
 from .TestReporterHTML import TestReporterHTML
-
 

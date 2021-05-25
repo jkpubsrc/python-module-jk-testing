@@ -1,7 +1,7 @@
 
 
 
-
+import re
 
 from .AssertionException import AssertionException
 
@@ -40,6 +40,10 @@ class _Assert(object):
 		Assert.l_isInstance(self.__log, value, typeOrTypes, message)
 	#
 
+	def isRegExMatch(self, value, regexPattern, message = None):
+		Assert.l_isRegExMatch(self.__log, value, regexPattern, message)
+	#
+
 	def isEqual(self, value, otherValue, message = None):
 		Assert.l_isEqual(self.__log, value, otherValue, message)
 	#
@@ -70,6 +74,10 @@ class _Assert(object):
 
 	def isNotNone(self, value, message = None):
 		Assert.l_isNotNone(self.__log, value, message)
+	#
+
+	def isNotNoneOrEmpty(self, value, message = None):
+		Assert.l_isNotNoneOrEmpty(self.__log, value, message)
 	#
 
 	def isTrue(self, value, message = None):
@@ -380,6 +388,50 @@ class Assert(object):
 	#
 
 	@staticmethod
+	def isRegExMatch(value, regexPattern, message = None, log = None, identifier:str = None):
+		m = re.match(regexPattern, value)
+		if m:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which does not match " + repr(regexPattern) + " as expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def l_isRegExMatch(log, value, regexPattern, message = None, identifier:str = None):
+		m = re.match(regexPattern, value)
+		if m:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is " + repr(value) + " which does not match " + repr(regexPattern) + " as expected!"
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
 	def isNotEqual(value, otherValue, message = None, log = None, identifier:str = None):
 		if value != otherValue:
 			return
@@ -661,6 +713,48 @@ class Assert(object):
 		else:
 			message += " ::"
 		message = "ASSERTION ERROR :: " + message + " Value is None which is not expected: " + repr(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def isNotNoneOrEmpty(value, message = None, log = None, identifier:str = None):
+		if value:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is None or empty which is not expected: " + repr(value)
+		if identifier:
+			message = "<" + identifier + "> " + message
+		if log != None:
+			if callable(log):
+				log(message)
+			else:
+				log.error(message)
+		else:
+			print(message)
+		raise AssertionException(message)
+	#
+
+	@staticmethod
+	def l_isNotNoneOrEmpty(log, value, message = None, identifier:str = None):
+		if value:
+			return
+		if message is None:
+			message = "ASSERTION ERROR"
+		else:
+			message += " ::"
+		message = "ASSERTION ERROR :: " + message + " Value is None or empty which is not expected: " + repr(value)
 		if identifier:
 			message = "<" + identifier + "> " + message
 		if log != None:
