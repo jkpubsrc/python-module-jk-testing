@@ -6,3 +6,8 @@
 
 * 2021-05-25
 	* Added isRegExMatch() and isNotNoneOrEmpty() to Assert
+
+* 2021-11-26
+	* Added: string list difference evaluation
+
+

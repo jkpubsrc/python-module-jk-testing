@@ -22,7 +22,7 @@
 		"license": "Apache2",
 		"name": "jk_testing",
 		"packageClass": "python-module",
-		"version": "0.2021.5.25"
+		"version": "0.2021.11.26"
 	},
 	"repositories": [
 		{
