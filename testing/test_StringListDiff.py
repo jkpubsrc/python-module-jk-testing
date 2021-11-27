@@ -26,7 +26,7 @@ print()
 diff.dump()
 print()
 
-print(diff.allLinesAreEqual)
+print(diff.areAllLinesEqual)
 
 
 

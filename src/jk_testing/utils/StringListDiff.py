@@ -59,7 +59,7 @@ class StringListDiff(object):
 	################################################################################################################################
 
 	@property
-	def allLinesAreEqual(self) -> bool:
+	def areAllLinesEqual(self) -> bool:
 		return self.__finalResult
 	#
 
