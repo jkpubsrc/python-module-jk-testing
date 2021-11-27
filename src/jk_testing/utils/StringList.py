@@ -32,7 +32,7 @@ class StringList(list):
 	## Public Methods
 	################################################################################################################################
 
-	def getMaxLineWidth(self) -> int:
+	def getMaxLineLength(self) -> int:
 		return max([
 			len(line) for line in self
 		])

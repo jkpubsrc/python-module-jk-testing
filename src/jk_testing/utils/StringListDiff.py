@@ -25,12 +25,12 @@ class StringListDiff(object):
 
 		self.__left = leftLines.cloneObject()
 		self.__leftNumberOfLines = len(self.__left)
-		self.__leftColumnWidth = max(self.__left.getMaxLineWidth(), len(leftCaption))
+		self.__leftColumnWidth = max(self.__left.getMaxLineLength(), len(leftCaption))
 		self.__leftCaption = leftCaption
 
 		self.__right = rightLines.cloneObject()
 		self.__rightNumberOfLines = len(self.__right)
-		self.__rightColumnWidth = max(self.__right.getMaxLineWidth(), len(rightCaption))
+		self.__rightColumnWidth = max(self.__right.getMaxLineLength(), len(rightCaption))
 		self.__rightCaption = rightCaption
 
 		self.__maxLines = max(len(leftLines), len(rightLines))
