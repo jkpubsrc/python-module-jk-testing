@@ -141,11 +141,11 @@ class StringListDiff(object):
 
 			output.append(markers[0])
 			output.append(
-				StringUtils.padRight(colors[0] + leftLine + colors[1], self.__leftColumnWidth, slen=len(leftLine)),
+				StringUtils.padRight(colors[0] + leftLine + colors[1], self.__leftColumnWidth, slen=len(leftLine))
 			)
 			output.append(markers[1])
 			output.append(
-				StringUtils.padRight(colors[0] + rightLine + colors[1], self.__rightColumnWidth, slen=len(rightLine)),
+				StringUtils.padRight(colors[0] + rightLine + colors[1], self.__rightColumnWidth, slen=len(rightLine))
 			)
 			output.append(markers[2])
 			i += 1
