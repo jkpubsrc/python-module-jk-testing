@@ -94,7 +94,14 @@ class TestReporterHTML(object):
 		self.__templateOverview = self.__env.get_template("index.html")
 	#
 
-	def report(self, testResultCollection:TestResultCollection, outDirPath:str="results", showInWebBrowser:bool=True):
+	def report(self,
+			testResultCollection:TestResultCollection,
+			outDirPath:str="results",
+			showInWebBrowser:bool=True,
+			serveWithWebServer:bool=False,
+			webbrowserType:str=None
+		):
+
 		if not os.path.isabs(outDirPath):
 			outDirPath = os.path.abspath(outDirPath)
 
@@ -118,11 +125,16 @@ class TestReporterHTML(object):
 		if showInWebBrowser:
 			httpd = ResultsHTTPServer(outDirPath)
 			print("Running web server. For results see: http://localhost:9096/")
-			webbrowser.open("http://localhost:9096/", new=1)
+			webbrowser.get(webbrowserType).open("http://localhost:9096/", new=1)
+			httpd.serve_forever()
+		elif serveWithWebServer:
+			httpd = ResultsHTTPServer(outDirPath)
+			print("Running web server. For results see: http://localhost:9096/")
 			httpd.serve_forever()
 	#
 
 	def __writeResultFile(self, testResult:TestResult, outDirPath:str):
+		jk_json.prettyPrint(testResult.logBuffer.toJSONPretty())
 
 		jsonTestRecord = {
 				"id": "test_" + testResult.name,
@@ -132,7 +144,7 @@ class TestReporterHTML(object):
 				"enabledState": str(testResult.enabledState),
 				"processingState": str(testResult.processingState),
 				"duration": testResult.duration,
-				"logBuffer": testResult.logBuffer.getDataAsPrettyJSON(),
+				"logBuffer": testResult.logBuffer.toJSONPretty()["logData"],
 				"description": testResult.description,
 			}
 
@@ -146,6 +158,7 @@ class TestReporterHTML(object):
 	def __writeOverviewFile(self, testResultCollection:TestResultCollection, outDirPath:str):
 		jsonTestRecords = []
 		for testResult in testResultCollection.testResults:
+			jk_json.prettyPrint(testResult.logBuffer.toJSONPretty())
 			jsonTestRecords.append({
 				"id": "test_" + testResult.name,
 				"file": "test_" + testResult.name + ".html",
@@ -154,7 +167,7 @@ class TestReporterHTML(object):
 				"enabledState": str(testResult.enabledState),
 				"processingState": str(testResult.processingState),
 				"duration": testResult.duration,
-				"logBuffer": testResult.logBuffer.getDataAsPrettyJSON(),
+				"logBuffer": testResult.logBuffer.toJSONPretty()["logData"],
 				"description": testResult.description,
 			})
 

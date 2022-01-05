@@ -10,4 +10,6 @@
 * 2021-11-26
 	* Added: string list difference evaluation
 
+* 2022-01-06
+	* Adapted to the new release of jk_logging
 

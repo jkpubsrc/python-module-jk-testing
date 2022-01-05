@@ -37,20 +37,19 @@
 	<h2>Log:</h2>
 
 	{% macro writeLogTimeStamp(timeStamp) -%}
-		<span class="logtimestamp">{{- "%04d-%02d-%02d %02d:%02d:%02d %03d%03d"|format(
+		<span class="logtimestamp">{{- "%04d-%02d-%02d %02d:%02d:%02d.%03d"|format(
 			timeStamp.year,
 			timeStamp.month,
 			timeStamp.day,
 			timeStamp.hour,
 			timeStamp.minute,
 			timeStamp.second,
-			timeStamp.ms,
-			timeStamp.us
+			timeStamp.ms
 		) -}}</span>
 	{%- endmacro %}
 
 	{% macro writeLogLevel(logLevel) -%}
-		<span class="loglevel">{{- logLevel -}}</span>
+		<span class="loglevel">{{- logLevel[1] -}}</span>
 	{%- endmacro %}
 
 	{% macro writeLogException(exceptionClassName) -%}
@@ -66,11 +65,11 @@
 	{%- endmacro %}
 
 	{% macro writeLogEntry(logEntry) -%}
-		<li class="logentry logentry_{{logEntry.loglevel}}">
+		<li class="logentry logentry_{{logEntry.logLevel}}">
 			{% if logEntry.type == "txt" %}
-				{{ writeLogTimeStamp(logEntry.timestamp) }}&nbsp;{{ writeLogLevel(logEntry.loglevel) }}&nbsp;:&nbsp;{{ writeLogText(logEntry.text) }}
+				{{ writeLogTimeStamp(logEntry.timeStamp) }}&nbsp;{{ writeLogLevel(logEntry.logLevel) }}&nbsp;:&nbsp;{{ writeLogText(logEntry.text) }}
 			{% elif logEntry.type == "ex" %}
-				{{ writeLogTimeStamp(logEntry.timestamp) }}&nbsp;{{ writeLogLevel(logEntry.loglevel) }}&nbsp;:&nbsp;{{ writeLogException(logEntry.exception) }}
+				{{ writeLogTimeStamp(logEntry.timeStamp) }}&nbsp;{{ writeLogLevel(logEntry.logLevel) }}&nbsp;:&nbsp;{{ writeLogException(logEntry.exception) }}
 				<ul class="log">
 					<li>{{ writeLogText(logEntry.text) }}</li>
 					{% for stackElement in logEntry.stacktrace %}
@@ -78,7 +77,7 @@
 					{% endfor %}
 				</ul>
 			{% else %}
-				{{ writeLogTimeStamp(logEntry.timestamp) }}&nbsp;{{ writeLogLevel(logEntry.loglevel) }}&nbsp;:&nbsp;{{ writeLogText(logEntry.text) }}
+				{{ writeLogTimeStamp(logEntry.timeStamp) }}&nbsp;{{ writeLogLevel(logEntry.logLevel) }}&nbsp;:&nbsp;{{ writeLogText(logEntry.text) }}
 				{% for subLogEntry in logEntry.children %}
 					<ul class="log">
 						{{ writeLogEntry(subLogEntry) }}

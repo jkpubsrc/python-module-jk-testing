@@ -54,7 +54,7 @@ setup(
 		"jk_testing",
 		"jk_testing.utils",
 	],
-	version = "0.2021.11.26",
+	version = "0.2022.1.5",
 	zip_safe = False,
 	long_description = readme(),
 	long_description_content_type="text/markdown",
