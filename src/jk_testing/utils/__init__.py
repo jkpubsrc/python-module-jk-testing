@@ -1,6 +1,6 @@
 ﻿
 
-__version__ = "0.2022.1.5"
+__version__ = "0.2022.1.6"
 
 
 
@@ -10,4 +10,3 @@ from .OutputComparison import OutputComparison
 from .StringUtils import StringUtils
 from .StringList import StringList
 from .StringListDiff import StringListDiff
-

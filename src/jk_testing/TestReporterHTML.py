@@ -134,7 +134,6 @@ class TestReporterHTML(object):
 	#
 
 	def __writeResultFile(self, testResult:TestResult, outDirPath:str):
-		jk_json.prettyPrint(testResult.logBuffer.toJSONPretty())
 
 		jsonTestRecord = {
 				"id": "test_" + testResult.name,
@@ -158,7 +157,6 @@ class TestReporterHTML(object):
 	def __writeOverviewFile(self, testResultCollection:TestResultCollection, outDirPath:str):
 		jsonTestRecords = []
 		for testResult in testResultCollection.testResults:
-			jk_json.prettyPrint(testResult.logBuffer.toJSONPretty())
 			jsonTestRecords.append({
 				"id": "test_" + testResult.name,
 				"file": "test_" + testResult.name + ".html",
