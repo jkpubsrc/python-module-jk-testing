@@ -57,7 +57,7 @@
 	{%- endmacro %}
 
 	{% macro writeLogText(logText) -%}
-		<span class="logtext">{{- logText -}}</span>
+		<span class="logtext">{{- logText|replace('\t', '&nbsp;&nbsp;&nbsp;&nbsp;')|safe -}}</span>
 	{%- endmacro %}
 
 	{% macro writeStackElement(stackElement) -%}
@@ -65,7 +65,7 @@
 	{%- endmacro %}
 
 	{% macro writeLogEntry(logEntry) -%}
-		<li class="logentry logentry_{{logEntry.logLevel}}">
+		<li class="logentry logentry_{{logEntry.logLevel[1]}}">
 			{% if logEntry.type == "txt" %}
 				{{ writeLogTimeStamp(logEntry.timeStamp) }}&nbsp;{{ writeLogLevel(logEntry.logLevel) }}&nbsp;:&nbsp;{{ writeLogText(logEntry.text) }}
 			{% elif logEntry.type == "ex" %}

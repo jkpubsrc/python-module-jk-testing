@@ -7,3 +7,4 @@ examples/__pycache__/
 examples/results/
 .svn/
 .vscode
+src/__*

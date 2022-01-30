@@ -13,3 +13,6 @@
 * 2022-01-06
 	* Adapted to the new release of jk_logging
 
+* 2022-01-30
+	* Bugfix: corrected HTML color output
+	* Added: indentation within log messages
