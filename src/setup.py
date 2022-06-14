@@ -25,7 +25,7 @@ setup(
 		"Topic :: Software Development :: Testing",
 	],
 	description = "This python module provides a simple to use infrastructure for running unit tests.",
-	include_package_data = True,
+	include_package_data = False,
 	install_requires = [
 		"jk_logging",
 		"jk_temporary",
@@ -54,8 +54,10 @@ setup(
 		"jk_testing",
 		"jk_testing.utils",
 	],
-	version = "0.2022.1.30",
+	scripts = [
+	],
+	version = '0.2022.6.8',
 	zip_safe = False,
 	long_description = readme(),
-	long_description_content_type="text/markdown",
+	long_description_content_type = "text/markdown",
 )

@@ -1,12 +1,16 @@
 
 
 
-import jk_logging
+import typing
 
 
 
 
-class TestContext(object):
+
+#
+# This class represents a test that might need to be performed. This class is an internal data structure for managing the test cases.
+#
+class _TestToRun(object):
 
 	################################################################################################################################
 	## Constructor
@@ -15,34 +19,23 @@ class TestContext(object):
 	#
 	# Constructor method.
 	#
-	def __init__(self, data:dict, globalVars:dict, log:jk_logging.AbstractLogger):
-		assert isinstance(data, dict)
-		assert isinstance(globalVars, dict)
-		assert isinstance(log, jk_logging.AbstractLogger)
+	def __init__(self,
+			testCallable:typing.Callable,
+			bEnabled:bool
+		):
 
-		self.__log = log
-		self.__data = data
-		self.__vars = globalVars
+		assert callable(testCallable)
+		assert isinstance(bEnabled, bool)
+
+		# ----
+		
+		self.testCallable:typing.Callable = testCallable			# theCallable
+		self.bEnabled:bool = bEnabled
 	#
 
 	################################################################################################################################
 	## Public Properties
 	################################################################################################################################
-
-	@property
-	def data(self) -> dict:
-		return self.__data
-	#
-
-	@property
-	def vars(self) -> dict:
-		return self.__vars
-	#
-
-	@property
-	def log(self) -> jk_logging.AbstractLogger:
-		return self.__log
-	#
 
 	################################################################################################################################
 	## Helper Methods

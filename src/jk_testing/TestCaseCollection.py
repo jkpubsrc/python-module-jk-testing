@@ -13,6 +13,7 @@ from .Annotations import *
 from .TestCaseInstance import *
 from .NodeMatrix import *
 from .SingleLookAtQueue import *
+from ._TestToRun import _TestToRun
 
 
 
@@ -66,10 +67,13 @@ class TestCaseCollection(object):
 	# Derives test case instances from the function.
 	#
 	@staticmethod
-	def __parseTestCallable(theCallable:collections.Callable, bEnabled:bool) -> TestCaseInstance:
-		if not callable(theCallable):
-			raise Exception("Not a callable: " + repr(theCallable))
-		assert isinstance(bEnabled, bool)
+	def __parseTestCallable(testToRun:_TestToRun) -> TestCaseInstance:
+		assert isinstance(testToRun, _TestToRun)
+
+		theCallable = testToRun.testCallable
+		bEnabled = testToRun.bEnabled
+
+		# ----
 
 		bIsObject = True
 		orgObj = None
@@ -126,13 +130,29 @@ class TestCaseCollection(object):
 	#										<c>testCaseCollection.isFailed</c> to detect this.
 	#
 	@staticmethod
-	def compile(testsToRunTuples:list, log = None):
+	def compile(testsToRunTuples:typing.Union[tuple,list], log:jk_logging.AbstractLogger = None):
+		assert isinstance(testsToRunTuples, (list,tuple))
+
 		if len(testsToRunTuples) == 0:
 			raise Exception("No tests specified!")
 
-		if isinstance(testsToRunTuples, (tuple, list)):
-			if callable(testsToRunTuples[0]):
-				testsToRunTuples = [ (x, True) for x in testsToRunTuples ]
+		_testsToRun:typing.List[_TestToRun] = []
+		for _t in testsToRunTuples:
+			if callable(_t):
+				_testsToRun.append( _TestToRun(_t, True) )
+			else:
+				assert isinstance(_t, (list,tuple))
+				assert len(_t) == 2
+				if not callable(_t[0]):
+					raise Exception("Not a callable: " + repr(_t[0]))
+				if not isinstance(_t[1], bool):
+					raise Exception("Not a boolean value: " + repr(_t[1]))
+
+				_testsToRun.append(_TestToRun(_t))
+
+		#if isinstance(testsToRunTuples, (tuple, list)):
+		#	if callable(testsToRunTuples[0]):
+		#		testsToRunTuples = [ (x, True) for x in testsToRunTuples ]
 
 		# build all test case instances
 
@@ -142,8 +162,8 @@ class TestCaseCollection(object):
 		allTestCases = []
 		allTestCasesByName = {}
 		allTestCasesByProvidedVariables = {}
-		for testCallable, bEnabled in testsToRunTuples:
-			testCaseInstance = TestCaseCollection.__parseTestCallable(testCallable, bEnabled)
+		for _testToRun in _testsToRun:
+			testCaseInstance = TestCaseCollection.__parseTestCallable(_testToRun)
 			if testCaseInstance.name in allTestCasesByName:
 				raise Exception("Duplicate test cases: " + testCaseInstance.name)
 			allTestCasesByName[testCaseInstance.name] = testCaseInstance

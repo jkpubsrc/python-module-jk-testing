@@ -16,3 +16,7 @@
 * 2022-01-30
 	* Bugfix: corrected HTML color output
 	* Added: indentation within log messages
+
+* 2022-06-08
+	* Minor chances for convenience
+

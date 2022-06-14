@@ -53,55 +53,58 @@ class TestDriver(object):
 	#													* The number of tests failed.
 	#													* list of test result records.
 	#
-	def runTests(self, testsToRun) -> TestResultCollection:
-		log2 = self.log.descend("Compiling test cases")
-		testCaseCollection = TestCaseCollection.compile(testsToRun, log2)
-		results = TestResultCollection(testCaseCollection, TestCollectionVisualizer())
-		if testCaseCollection.isFailed:
-			# prepairing tests failed!
-			log2.error("Preparations failed!")
-			return results
-		log2.success("Preparations succeeded.")
+	def runTests(self, testsToRun:typing.Union[tuple,list]) -> TestResultCollection:
+		with self.log.descend("Compiling test cases") as log2:
 
-		log2 = self.log.descend("Running tests ...")
+			testCaseCollection = TestCaseCollection.compile(testsToRun, log2)
 
-		variables = {}
-		theTestsToRun = testCaseCollection.enabledTestCasesToRunInDefinedOrder
-		t0 = datetime.datetime.now()
+			results = TestResultCollection(testCaseCollection, TestCollectionVisualizer())
+			if testCaseCollection.isFailed:
+				# prepairing tests failed!
+				log2.error("Preparations failed!")
+				return results
+			log2.success("Preparations succeeded.")
 
-		for testCaseInstance in theTestsToRun:
-			if testCaseInstance.isRoot:
-				continue
+		with self.log.descend("Running tests ...") as log2:
 
-			logBuffer = jk_logging.BufferLogger.create()
-			processingState = testCaseInstance.runTest(self.__data, variables, logBuffer)
-			testResult = TestResult(testCaseInstance, logBuffer)
-			logBuffer.forwardTo(log2)
+			variables = {}
+			theTestsToRun = testCaseCollection.enabledTestCasesToRunInDefinedOrder
+			t0 = datetime.datetime.now()
 
-			results.testResults.append(testResult)
-			if processingState == EnumProcessingState.FAILED:
-				results.countTestsFailed += 1
-			elif processingState == EnumProcessingState.FAILED_CRITICALLY:
-				results.countTestsFailed += 1
-				break
-			elif processingState == EnumProcessingState.SUCCEEDED:
-				results.countTestsSucceeded += 1
+			for testCaseInstance in theTestsToRun:
+				if testCaseInstance.isRoot:
+					continue
+
+				logBuffer = jk_logging.BufferLogger.create()
+				processingState = testCaseInstance.runTest(self.__data, variables, logBuffer)
+				testResult = TestResult(testCaseInstance, logBuffer)
+				logBuffer.forwardTo(log2)
+
+				results.testResults.append(testResult)
+				if processingState == EnumProcessingState.FAILED:
+					results.countTestsFailed += 1
+				elif processingState == EnumProcessingState.FAILED_CRITICALLY:
+					results.countTestsFailed += 1
+					break
+				elif processingState == EnumProcessingState.SUCCEEDED:
+					results.countTestsSucceeded += 1
+				else:
+					raise Exception()
+				results.totalTestDuration += testResult.duration
+
+			results.totalTestRuntime = (datetime.datetime.now() - t0).total_seconds()
+
+		with self.log.descend("Summary") as log2:
+
+			log2.info("Number of tests performed: " + str(results.countTestsPerformed))
+			if results.countTestsFailed > 0:
+				log2.info("Number of tests succeeded: " + str(results.countTestsSucceeded))
+				log2.error("Number of tests failed: " + str(results.countTestsFailed))
 			else:
-				raise Exception()
-			results.totalTestDuration += testResult.duration
-
-		results.totalTestRuntime = (datetime.datetime.now() - t0).total_seconds()
-
-		log2 = self.log.descend("Summary")
-		log2.info("Number of tests performed: " + str(results.countTestsPerformed))
-		if results.countTestsFailed > 0:
-			log2.info("Number of tests succeeded: " + str(results.countTestsSucceeded))
-			log2.error("Number of tests failed: " + str(results.countTestsFailed))
-		else:
-			log2.success("Number of tests succeeded: " + str(results.countTestsSucceeded))
-			log2.info("Number of tests failed: " + str(results.countTestsFailed))
-		log2.info("Total duration: " + jk_utils.formatTime(results.totalTestRuntime))
-		log2.info("Average duration of single test: " + str(round(results.totalTestRuntime * 1000 / results.countTestsPerformed, 1)) + " ms")
+				log2.success("Number of tests succeeded: " + str(results.countTestsSucceeded))
+				log2.info("Number of tests failed: " + str(results.countTestsFailed))
+			log2.info("Total duration: " + jk_utils.formatTime(results.totalTestRuntime))
+			log2.info("Average duration of single test: " + str(round(results.totalTestRuntime * 1000 / results.countTestsPerformed, 1)) + " ms")
 
 		return results
 	#

@@ -96,10 +96,10 @@ class TestReporterHTML(object):
 
 	def report(self,
 			testResultCollection:TestResultCollection,
-			outDirPath:str="results",
-			showInWebBrowser:bool=True,
-			serveWithWebServer:bool=False,
-			webbrowserType:str=None
+			outDirPath:str = "results",
+			showInWebBrowser:bool = True,
+			serveWithWebServer:bool = False,
+			webbrowserType:str = None
 		):
 
 		if not os.path.isabs(outDirPath):
@@ -122,15 +122,17 @@ class TestReporterHTML(object):
 
 		# ----
 
-		if showInWebBrowser:
+		if serveWithWebServer:
+			httpd = ResultsHTTPServer(outDirPath)
+			print("Running web server. For results see: http://localhost:9096/")
+			httpd.serve_forever()
+		elif showInWebBrowser:
 			httpd = ResultsHTTPServer(outDirPath)
 			print("Running web server. For results see: http://localhost:9096/")
 			webbrowser.get(webbrowserType).open("http://localhost:9096/", new=1)
 			httpd.serve_forever()
-		elif serveWithWebServer:
-			httpd = ResultsHTTPServer(outDirPath)
-			print("Running web server. For results see: http://localhost:9096/")
-			httpd.serve_forever()
+		else:
+			pass
 	#
 
 	def __writeResultFile(self, testResult:TestResult, outDirPath:str):
