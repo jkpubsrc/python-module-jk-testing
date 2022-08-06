@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 
 
@@ -9,7 +7,15 @@ import typing
 
 import jk_logging
 
-from .Annotations import *
+from .annotations import Description
+from .annotations import ProvidesVariable
+from .annotations import RaisesException
+from .annotations import Requires
+from .annotations import RequiresVariable
+from .annotations import RunAfter
+from .annotations import RunBefore
+from .annotations import TestCase
+
 from .TestCaseInstance import *
 from .NodeMatrix import *
 from .SingleLookAtQueue import *
@@ -148,7 +154,7 @@ class TestCaseCollection(object):
 				if not isinstance(_t[1], bool):
 					raise Exception("Not a boolean value: " + repr(_t[1]))
 
-				_testsToRun.append(_TestToRun(_t))
+				_testsToRun.append(_TestToRun(*_t))
 
 		#if isinstance(testsToRunTuples, (tuple, list)):
 		#	if callable(testsToRunTuples[0]):
@@ -254,7 +260,10 @@ class TestCaseCollection(object):
 					pass
 
 				else:
-					raise Exception()
+					print(repr(RaisesException))
+					print(repr(aspect))
+					print(repr(aspect.__class__))
+					raise Exception(repr(aspect))
 
 		# clean excessive root node connections
 

@@ -8,3 +8,5 @@ examples/results/
 .svn/
 .vscode
 src/__*
+*.old
+*.bak

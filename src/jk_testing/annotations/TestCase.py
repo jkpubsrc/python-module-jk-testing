@@ -1,114 +1,14 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 import functools
-import typing
 
-
-
-
-
-
-
-
-class RequiresVariable(object):
-
-	def __init__(self, varName):
-		if isinstance(varName, str):
-			self.varName = varName
-		else:
-			raise Exception("Variable name expected!")
-	#
-
-#
-
-
-
-class ProvidesVariable(object):
-
-	def __init__(self, varName):
-		if isinstance(varName, str):
-			self.varName = varName
-		else:
-			raise Exception("Variable name expected!")
-	#
-
-#
-
-
-
-class RunAfter(object):
-
-	def __init__(self, testName):
-		if isinstance(testName, str):
-			self.testName = testName
-		else:
-			raise Exception("Name of a test expected!")
-	#
-
-#
-
-
-
-class Requires(object):
-
-	def __init__(self, testName):
-		if isinstance(testName, str):
-			self.testName = testName
-		else:
-			raise Exception("Name of a test expected!")
-	#
-
-#
-
-
-
-class RunBefore(object):
-
-	def __init__(self, testName):
-		if isinstance(testName, str):
-			self.testName = testName
-		else:
-			raise Exception("Name of a test expected!")
-	#
-
-#
-
-
-
-class RaisesException(object):
-
-	def __init__(self, exceptionClass:typing.Union[str,type], **kwargs):
-		if isinstance(exceptionClass, (str, type)):
-			self.exceptionClass = exceptionClass
-			self.exceptionData = kwargs if kwargs else None
-		else:
-			raise Exception("Exception class expected!")
-	#
-
-#
-
-
-
-class Description(object):
-
-	def __init__(self, text):
-		if isinstance(text, str):
-			if len(text) > 0:
-				self.text = text
-			else:
-				raise Exception("Description is empty!")
-		else:
-			raise Exception("Description text expected!")
-	#
-
-#
-
-
-
-
-
-
+from .ProvidesVariable import ProvidesVariable
+from .RequiresVariable import RequiresVariable
+from .RunAfter import RunAfter
+from .RunBefore import RunBefore
+from .Requires import Requires
+from .RaisesException import RaisesException
+from .Description import Description
 
 
 
@@ -130,13 +30,23 @@ def _appendTo(someItemOrItems, classToWrap, someList):
 
 
 
+
+
 class TestCase(object):
+
+	################################################################################################################################
+	## Constants
+	################################################################################################################################
 
 	__VALID_CLASSES = (ProvidesVariable, RequiresVariable, RunAfter, RunBefore, Requires, RaisesException, Description)
 
+	################################################################################################################################
+	## Constructor
+	################################################################################################################################
+
 	def __init__(self,
-		*testAspects,
-		**kwargs
+			*testAspects,
+			**kwargs
 		):
 
 		# check if test aspects are valid
@@ -160,6 +70,18 @@ class TestCase(object):
 		# remember them for later
 		self.testAspects = testAspects
 	#
+
+	################################################################################################################################
+	## Public Properties
+	################################################################################################################################
+
+	################################################################################################################################
+	## Helper Methods
+	################################################################################################################################
+
+	################################################################################################################################
+	## Public Methods
+	################################################################################################################################
 
 	def __get__(self, obj, objtype):
 		return functools.partial(self.__call__, obj)
@@ -191,8 +113,6 @@ class TestCase(object):
 	#
 
 #
-
-
 
 
 

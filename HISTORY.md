@@ -20,3 +20,8 @@
 * 2022-06-08
 	* Minor chances for convenience
 
+* 2022-08-06
+	* Bugfix: calls of test cases fixed
+	* Major refactoring
+	* Added: More exception argument checking
+

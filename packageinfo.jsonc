@@ -21,7 +21,7 @@
 		"license": "Apache2",
 		"name": "jk_testing",
 		"packageClass": "python-module",
-		"version": "0.2022.6.8"
+		"version": "0.2022.8.6"
 	},
 	"requirements": {
 		"htmlcssjs_packages": [],
@@ -48,7 +48,9 @@
 		],
 		"packages": [
 			"jk_testing",
-			"jk_testing.utils"
+			"jk_testing.utils",
+			"jk_testing.impl",
+			"jk_testing.annotations",
 		]
 	}
 }

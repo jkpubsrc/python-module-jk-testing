@@ -1,16 +1,24 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 
 
 import time
+import typing
 import collections
 
 import jk_logging
 import jk_utils
 
+from .annotations import Description
+from .annotations import ProvidesVariable
+from .annotations import RaisesException
+from .annotations import Requires
+from .annotations import RequiresVariable
+from .annotations import RunAfter
+from .annotations import RunBefore
+from .annotations import TestCase
+
+from .impl.ExceptionMatcher import ExceptionMatcher
 from .TestContext import TestContext
-from .Annotations import *
 from .EnumProcessingState import EnumProcessingState
 from .EnumEnabledState import EnumEnabledState
 
@@ -18,33 +26,6 @@ from .EnumEnabledState import EnumEnabledState
 
 
 
-
-class ExceptionMatcher(object):
-
-	def __init__(self, exceptionClass:typing.Union[str,type], exceptionData:dict):
-		assert isinstance(exceptionClass, (str, type))
-		self.exceptionClass = exceptionClass
-		self.exceptionData = exceptionData if exceptionData else None
-	#
-
-	def matches(self, ee:Exception):
-		if isinstance(self.exceptionClass, str):
-			if ee.__class__.__name__ != self.exceptionClass:
-				return False
-		else:
-			if ee.__class__ != self.exceptionClass:
-				return False
-
-		if self.exceptionData:
-			for k, v in self.exceptionData.items():
-				eev = getattr(ee, k, None)
-				if eev != v:
-					return False
-
-		return True
-	#
-
-#
 
 
 
@@ -54,8 +35,9 @@ class TestCaseInstance(object):
 	# Constructor.
 	#
 	# @param	str testCaseName					The name of a test case.
-	# @param	Annotation[] testCaseAspects		A (possibly empty) set of annotations that accompany the test case.
-	# @param	callable testCaseCallable			The function to execute that implements the test.
+	# @param	Annotation[] testCaseAspects		A (possibly empty) set of annotations that define the test case in more detail.
+	# @param	callable testCaseCallable			The user provided function that implements the test.
+	#												This is the function decorated with <c>TestCase</c>.
 	# @param	bool bEnabled						A flag that indicates if the test is enabled by default.
 	#
 	def __init__(self, bIsRoot:bool, testCaseName:str, testCaseAspects:collections.Sequence,
@@ -100,12 +82,12 @@ class TestCaseInstance(object):
 						self.variablesProvided = []
 					self.variablesProvided.append(a.varName)
 
-				if isinstance(a, RaisesException):
+				elif isinstance(a, RaisesException):
 					if self.possibleExceptions is None:
 						self.possibleExceptions = []
-					self.possibleExceptions.append(ExceptionMatcher(a.exceptionClass, a.exceptionData))
+					self.possibleExceptions.append(ExceptionMatcher(a.exceptionClass, a.exceptionDataArgs, a.exceptionDataKWArgs))
 
-				if isinstance(a, Description):
+				elif isinstance(a, Description):
 					self.description = a.text
 
 			#if self.possibleExceptions != None:
