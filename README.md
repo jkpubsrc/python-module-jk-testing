@@ -8,7 +8,7 @@ This python module provides a simple to use infrastructure for running unit test
 
 Information about this module can be found here:
 
-* [github.org](https://github.com/jkpubsrc/python-module-jk-testing)
+* [github.com](https://github.com/jkpubsrc/python-module-jk-testing)
 * [pypi.python.org](https://pypi.python.org/pypi/jk_testing)
 
 How to use this module
